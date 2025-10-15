@@ -49,7 +49,7 @@ MichiSpotter/
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/MichiSpotter.git
+git clone https://github.com/MaribelSR/MichiSpotter.git
 cd MichiSpotter
 
 # No requiere instalación de dependencias adicionales
