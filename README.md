@@ -1,4 +1,9 @@
 # MichiSpotter 🐱
+> Documenta y sigue a los michis de tu barrio
+
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![SQLite](https://img.shields.io/badge/database-SQLite-green.svg)
+![License](https://img.shields.io/badge/license-MIT-orange.svg)
 
 **Sistema de registro y seguimiento de gatos callejeros**
 
