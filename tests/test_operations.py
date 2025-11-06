@@ -1,5 +1,5 @@
-from main import Gato, crear_gato, borrar_gato, Bd, editar_gato, listar_gatos
-import main
+from michispotter import Gato, crear_gato, borrar_gato, Bd, editar_gato, listar_gatos
+import pytest
 
 
 def gato_prueba():
@@ -9,6 +9,20 @@ def gato_prueba():
     gato.ubicacion = "Calle Porvera, Jerez de la Frontera, Cádiz."
     gato.apodo = "Manchitas"
     return gato
+
+
+@pytest.fixture
+def conexion():
+    """
+    Fixture creada para que permita la conexión a la base de datos.
+    """
+    # Usamos una base de datos en memoria para que cada test comience de cero, limpio y rápido.
+    Bd.nombre = ":memory:"
+    con = Bd.abrir()
+
+    yield con
+
+    Bd.cerrar()
 
 
 def test_crear_gato(conexion):
@@ -92,16 +106,3 @@ def test_listar_gatos(conexion):
     assert gatos[0].apodo == "Gatito", "El primer gato debe apodarse Gatito."
     assert gatos[1].apodo == "Pelusa", "El segundo gato debe apodarse Pelusa."
     assert gatos[2].apodo == "Pulga", "El tercer gato debe apodarse Pulga."
-
-
-if __name__ == "__main__":
-    for fn in [test_crear_gato, test_borrar_gato, test_editar_gato, test_listar_gatos]:
-        Bd.nombre = ":memory:"
-        conexion = Bd.abrir()
-        try:
-            fn(conexion)
-            print(f"✅ {fn.__name__}")
-        except AssertionError as e:
-            print(f"❌ {fn.__name__}: {e}")
-        finally:
-            Bd.cerrar()
