@@ -17,12 +17,12 @@ def buscar_gatos(termino_busqueda):
     cursor = conexion.cursor()
 
     # Término para SQL LIKE(búsqueda parcial).
-    termino = f"%{termino_busqueda}"
+    termino = f"%{termino_busqueda}%"
 
     # Consulta SQL para buscar gatos que coincidan con el término de búsqueda usando OR.
     resultado = cursor.execute(
         """
-        SELECT id, raza, descripcion, apodo, color 
+        SELECT id, raza, descripcion, ubicacion, apodo, color 
         FROM gatos
         WHERE apodo LIKE ? OR raza LIKE ? OR ubicacion LIKE ? OR descripcion LIKE ?
         ORDER BY apodo
