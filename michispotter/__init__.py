@@ -21,7 +21,7 @@ from .operations import (
 
 from .utils import (
     buscar_gatos,
-    # exportar_a_txt,
+    exportar_a_csv,
     # obtener_estadisticas,
     # obtener_raza_mas_comun,
     # listar_gatos_por_ubicacion,
@@ -42,7 +42,7 @@ __all__ = [
     # "contar_gatos",
     # Utilidades
     "buscar_gatos",
-    # "exportar_a_txt",
+    "exportar_a_csv",
     # "obtener_estadisticas",
     # "obtener_raza_mas_comun",
     # "listar_gatos_por_ubicacion",

@@ -1,6 +1,8 @@
 import sqlite3
+import csv
 from .database import Bd
 from .models import Gato
+from .operations import listar_gatos
 
 """
 Funciones auxiliares para buscar gatos y exportar listado de gatos.
@@ -43,3 +45,49 @@ def buscar_gatos(termino_busqueda):
         lista_gatos.append(instancia)
 
     return lista_gatos
+
+
+def exportar_a_csv(nombre_archivo="gatos.csv"):
+    """
+    Obtiene todos los gatos de la Base de Datos y los exporta a un archivo CSV.
+
+    Args:
+        nombre_archivo (str): El nombre del archivo a generar. Por defecto es "gatos.csv".
+
+    Returns:
+        bool: True si la exportación fue exitosa, False si no.
+    """
+    try:
+        # Obtener los datos.
+        gatos = listar_gatos()
+
+        # Abrir el archivo en modo escritura ("w"). newline='' es necesario para que csv.writer funcione bien en Windows.
+        with open("nombre_archivo", "w", newline="", encoding="utf-8") as archivo_csv:
+
+            # Crear el escritor (writer) de CSV.
+            escritor = csv.writer(archivo_csv)
+            # Escribir la fila de la cabecera (Header).
+            escritor.writerow(
+                ["ID", "Apodo", "Raza", "Color", "Ubicación", "Descripción"]
+            )
+
+            # Escribir los datos de cada gato
+
+            for gato in gatos:
+                escritor.writerow(
+                    [
+                        gato.id,
+                        gato.apodo,
+                        gato.raza,
+                        gato.color,
+                        gato.ubicacion,
+                        gato.descripcion,
+                    ]
+                )
+
+        # Exportación exitosa.
+        return True
+    except IOError as e:
+        # Capturamos un posible error si no se pued escribir el archivo
+        print(f"Error al escribir el archivo {nombre_archivo}: {e}")
+        return False
