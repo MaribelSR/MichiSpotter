@@ -62,7 +62,7 @@ def exportar_a_csv(nombre_archivo="gatos.csv"):
         gatos = listar_gatos()
 
         # Abrir el archivo en modo escritura ("w"). newline='' es necesario para que csv.writer funcione bien en Windows.
-        with open("nombre_archivo", "w", newline="", encoding="utf-8") as archivo_csv:
+        with open(nombre_archivo, "w", newline="", encoding="utf-8") as archivo_csv:
 
             # Crear el escritor (writer) de CSV.
             escritor = csv.writer(archivo_csv)

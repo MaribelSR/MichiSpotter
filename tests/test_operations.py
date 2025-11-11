@@ -1,4 +1,5 @@
 import pytest
+import csv
 from michispotter import (
     Gato,
     Bd,
@@ -8,16 +9,8 @@ from michispotter import (
     listar_gatos,
     obtener_gato_por_id,
     buscar_gatos,
+    exportar_a_csv,
 )
-
-
-def gato_prueba():
-    gato = Gato()
-    gato.raza = "Carey"
-    gato.descripcion = "Tiene manchas marrones"
-    gato.ubicacion = "Calle Porvera, Jerez de la Frontera, Cádiz."
-    gato.apodo = "Manchitas"
-    return gato
 
 
 @pytest.fixture
@@ -32,6 +25,15 @@ def conexion():
     yield con
 
     Bd.cerrar()
+
+
+def gato_prueba():
+    gato = Gato()
+    gato.raza = "Carey"
+    gato.descripcion = "Tiene manchas marrones"
+    gato.ubicacion = "Calle Porvera, Jerez de la Frontera, Cádiz"
+    gato.apodo = "Manchitas"
+    return gato
 
 
 def test_crear_gato(conexion):
@@ -84,7 +86,7 @@ def test_editar_gato(conexion):
     assert len(gatos) == 1, "Debe de haber un solo gato."
     assert (
         gatos[0][0] == "Colmillitos"
-    ), "El único gato que hay debe llamarse Colmillitos"
+    ), "El único gato que hay debe llamarse Colmillitos."
 
 
 def test_listar_gatos(conexion):
@@ -134,19 +136,19 @@ def test_obtener_gato_por_id(conexion):
     Prueba donde se comprueba obtener_gato_por_id y devuelve None si no existe.
     """
     gato = gato_prueba()
-    assert crear_gato(gato), "Fallo al crear el gato de prueba"
+    assert crear_gato(gato), "Fallo al crear el gato de prueba."
 
     # Prueba de un ID existente.
     gato_obtenido = obtener_gato_por_id(gato.id)
 
-    assert gato_obtenido is not None, "El gato obtenido no debería de ser None"
-    assert isinstance(gato_obtenido, Gato), "Debería devolver un objeto Gato"
-    assert gato_obtenido.id == gato.id, "El ID del gato no coincide"
-    assert gato_obtenido.apodo == "Manchitas", "El apodo del gato no coincide"
+    assert gato_obtenido is not None, "El gato obtenido no debería de ser None."
+    assert isinstance(gato_obtenido, Gato), "Debería devolver un objeto Gato."
+    assert gato_obtenido.id == gato.id, "El ID del gato no coincide."
+    assert gato_obtenido.apodo == "Manchitas", "El apodo del gato no coincide."
 
     # Prueba de un ID no existente
     gato_no_existente = obtener_gato_por_id(999)
-    assert gato_no_existente is None, "Debería devolver None para un ID que no existe"
+    assert gato_no_existente is None, "Debería devolver None para un ID que no existe."
 
 
 def test_buscar_gatos(conexion):
@@ -167,24 +169,94 @@ def test_buscar_gatos(conexion):
     gato3.apodo = "Bigotes"
     gato3.descripcion = "Duerme mucho en el parque"
 
-    assert crear_gato(gato1), "Fallo al crear gato1"
-    assert crear_gato(gato2), "Fallo al crear gato2"
-    assert crear_gato(gato3), "Fallo al crear gato3"
+    assert crear_gato(gato1), "Fallo al crear gato1."
+    assert crear_gato(gato2), "Fallo al crear gato2."
+    assert crear_gato(gato3), "Fallo al crear gato3."
 
     # Prueba de búsqueda por apodo.
     resultados1 = buscar_gatos("Manchitas")
-    assert len(resultados1) == 1, "Debería de encontrar un gato por apodo"
-    assert resultados1[0].apodo == "Manchitas", "El gato encontrado no es el correcto"
+    assert len(resultados1) == 1, "Debería de encontrar un gato por apodo."
+    assert resultados1[0].apodo == "Manchitas", "El gato encontrado no es el correcto."
 
     # Prueba de búsqueda por ubicación (encuentra 2).
     resultados2 = buscar_gatos("Parque")
-    assert len(resultados2) == 2, "Debería de encontrar 2 gatos por ¨Parque¨"
+    assert len(resultados2) == 2, "Debería de encontrar 2 gatos por ¨Parque¨."
 
     # Prueba de búsqueda por raza.
     resultados3 = buscar_gatos("Persa")
-    assert len(resultados3) == 1, "Debería de encontrar 1 gato por raza ¨Persa¨"
-    assert resultados3[0].apodo == "Pelusa", "El gato encontrado no es ¨Pelusa¨"
+    assert len(resultados3) == 1, "Debería de encontrar 1 gato por raza ¨Persa¨."
+    assert resultados3[0].apodo == "Pelusa", "El gato encontrado no es ¨Pelusa¨."
 
     # Prueba de búsqueda sin resultados
     resultados4 = buscar_gatos("Inexistente123")
-    assert len(resultados4) == 0, "No debería de encontrar resultados"
+    assert len(resultados4) == 0, "No debería de encontrar resultados."
+
+
+def test_exportar_a_csv(conexion, tmp_path):
+    """
+    Prueba que la exportación a CSV funciona correctamente, crea un archivo y escribe el contenido que se espera.
+
+    Usa "conexión" para la BBDD en memoria.
+    Usa "tmp_path" para crear un archivo temporal de forma segura.
+    """
+    # Se crea dos gatos para tener datos que exportar.
+    gato1 = gato_prueba()
+    gato1.apodo = "Manchitas"
+
+    gato2 = gato_prueba()
+    gato2.apodo = "Pelusa"
+    gato2.raza = "Persa"
+
+    assert crear_gato(gato1), "Fallo al crear el gato1"
+    assert crear_gato(gato2), "Fallo al crear el gato2"
+
+    # Definir la ruta del archivo. Uso de / para unir la carpeta temporal con el nombre del archivo.
+    archivo_de_prueba = tmp_path / "test_gatos.csv"
+
+    # Ruta completa del archivo de prueba.
+    resultado_exportacion = exportar_a_csv(archivo_de_prueba)
+
+    assert (
+        resultado_exportacion == True
+    ), "La función exportar_a_csv() debería devolver True."
+    assert (
+        archivo_de_prueba.exists()
+    ), "El archivo CSV no se creó en la carpeta temporal."
+
+    # Comprobación de que el contenido del archivo es correcto.
+    try:
+        # Se abre el archivo que se acaba de crear para leerlo.
+        with open(archivo_de_prueba, "r", encoding="utf-8") as f:
+            lector = csv.reader(f)
+            # Se convierte el contenido en una lista de listas.
+            datos_leidos = list(lector)
+
+            # Se comprueba el número de filas (1 cabecera + 2 gatos creados de prueba anteriormente).
+            assert (
+                len(datos_leidos) == 3
+            ), f"El CSV debería de tener 3 filas, pero tiene {len(datos_leidos)}."
+
+            # Se comprueba la cabecera.
+            cabecera_esperada = [
+                "ID",
+                "Apodo",
+                "Raza",
+                "Color",
+                "Ubicación",
+                "Descripción",
+            ]
+            assert (
+                datos_leidos[0] == cabecera_esperada
+            ), "La fila de cabecera no es correcta."
+
+            # Se comprueba los datos con el apodo.
+            assert (
+                datos_leidos[1][1] == "Manchitas"
+            ), "El apodo del primer gato no es 'Manchitas'."
+            assert (
+                datos_leidos[2][1] == "Pelusa"
+            ), "El apodo del segundo gato no es 'Pelusa'."
+
+    except Exception as e:
+        # Si falla la lectura, se hace que el test falle con un mensaje claro.
+        assert False, f"Error al leer el archivo CSV de prueba: {e}."
