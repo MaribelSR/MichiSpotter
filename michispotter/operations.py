@@ -46,8 +46,8 @@ def listar_gatos():
         instancia.id = gato[0]
         instancia.raza = gato[1]
         instancia.descripcion = gato[2]
-        instancia.ubicacion = gato[3]
-        instancia.apodo = gato[4]
+        instancia.color = gato[3]
+        instancia.ubicacion = gato[4]
         instancia.apodo = gato[5]
         lista_gatos.append(instancia)
 
