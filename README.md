@@ -21,6 +21,7 @@ Este proyecto nace como una herramienta práctica para ayudar a comunidades y cu
 - ✅ **Gestión de Base de Datos**: Persistencia local robusta usando **SQLite**.
 - ✅ **Operaciones CRUD Completas**: Funciones para Crear, Leer, Actualizar y Borrar registros.
 - ✅ **Búsqueda Avanzada**: Función para buscar gatos por apodo, raza o ubicación.
+- ✅ **Exportación de Datos**: Generación de informes en formato CSV para análisis externo.
 - ✅ **Pruebas Automatizadas**: Suite de tests completa usando **Pytest** y fixtures.
 
 ## 🛠️ Tecnologías
@@ -28,6 +29,7 @@ Este proyecto nace como una herramienta práctica para ayudar a comunidades y cu
 - **Python 3.x**
 - **SQLite3**
 - **Pytest** (para la suite de pruebas)
+- **CSV & Pathlib** (para manejo de archivos)
 
 ## 📁 Estructura del Proyecto
 
@@ -41,7 +43,7 @@ MichiSpotter/
 │   ├── database.py   # Gestión de la conexión (Clase Bd)
 │   ├── models.py     # Definición del modelo (Clase Gato)
 │   ├── operations.py # Funciones CRUD (crear_gato, etc.)
-│   └── utils.py      # Funciones auxiliares (buscar_gatos, etc.)
+│   └── utils.py      # Funciones auxiliares (buscar_gatos, exportar_a_csv, etc.)
 │
 ├── tests/            # Pruebas automatizadas
 │   └── test_operations.py
@@ -86,7 +88,7 @@ MichiSpotter/
 
 ```python
 # Importa las funciones y clases desde el paquete
-from michispotter import Gato, Bd, crear_gato, listar_gatos, buscar_gatos
+from michispotter import Gato, Bd, crear_gato, listar_gatos, buscar_gatos, exportar_a_csv
 
 # 1. Crear un nuevo registro de gato
 gato_nuevo = Gato()
@@ -111,6 +113,10 @@ print("\n--- Búsqueda de 'Tigre' ---")
 gatos_encontrados = buscar_gatos("Tigre")
 for g in gatos_encontrados:
     print(f"Encontrado: {g.apodo} en {g.ubicacion}")
+
+# 4. Exportar listado
+if exportar_a_csv("mis_gatos.csv"):
+    print("\n✅ Archivo 'mis_gatos.csv' generado correctamente.")
 
 # No olvides cerrar la conexión al final de tu app
 Bd.cerrar()
@@ -138,8 +144,8 @@ Este proyecto usa `pytest` para las pruebas.
 - [x] Estructura base del proyecto (CRUD)
 - [x] Implementar Pruebas con Pytest
 - [x] Añadir función de Búsqueda (`buscar_gatos`)
+- [x] Exportación de datos (CSV, JSON)
 - [ ] Interfaz gráfica (GUI con Tkinter o web con Flask)
-- [ ] Exportación de datos (CSV, JSON)
 - [ ] Subida de fotografías de cada gato
 - [ ] API REST para acceso remoto
 
@@ -158,7 +164,7 @@ Desarrollado por **María Isabel Salvador Rufo** como proyecto de portfolio para
 - **Programación Orientada a Objetos (POO)** en Python.
 - Diseño de **paquetes modulares** y mantenibles.
 - Gestión de bases de datos con **SQLite** (operaciones CRUD completas).
-- **Testing automatizado** con **Pytest**, incluyendo `fixtures` y bases de datos en memoria.
+- **Testing automatizado** con **Pytest**, incluyendo `fixtures` personalizadas (BBDD en memoria) y pruebas de efectos secundarios de E/S (`tmp_path`).
 - Refactorización y mantenimiento de código limpio.
 
 ---
